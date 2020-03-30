@@ -1,21 +1,20 @@
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
-
-const server = express();
+const app = express();
 const routes = require("../configRoutes/configRoutes");
 
-server.use(helmet());
-server.use(cors());
-server.use(express.json());
+app.use(helmet());
+app.use(cors());
+app.use(express.json());
 
-server.use("/api", routes);
-
-
+app.use("/api", routes);
 
 
-server.get("/", async (req, res) => {
-  res.status(200).json("Server works.");
+
+
+app.get("/", async (req, res) => {
+  res.status(200).json("app works.");
 });
 
-module.exports = server;
+module.exports = app;

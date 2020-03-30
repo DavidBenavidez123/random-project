@@ -18,13 +18,18 @@ router.get('/', (req, res) => {
     res.send('hello')
 })
 
+
+
 router.post('/register', (req, res) => {
     const credentials = req.body;
     const hash = bcrypt.hashSync(credentials.password, 10);
     credentials.password = hash;
     db('users')
         .where('email', credentials.email)
+        .orWhere('username', credentials.username)
         .then(user => {
+            console.log('-----------------------------------------------')
+            console.log(user)
             if (user === undefined || user.length == 0) {
                 return db('users')
                     .insert(credentials)
@@ -35,12 +40,28 @@ router.post('/register', (req, res) => {
                         res.status(500).json(err);
                     });
             }
-            else {
-                res.status(201).json({ err: 'email in use' });
+            else if (user[0].email === credentials.email && user[0].username === credentials.username) {
+                res.status(500).json({ emailErr: 'email taken 1', usernameErr: 'username taken 1' });
+            }
+
+            else if (user[0].email === credentials.email && user[0].username !== credentials.username && (user[1] === undefined)) {
+                res.status(500).json({ emailErr: 'email taken 2' });
+            }
+
+            else if (user[0].email === credentials.email && user[0].username !== credentials.username && (user[1] === undefined)) {
+                res.status(500).json({ usernameErr: 'username taken 3' });
+            }
+
+            else if (user[0].email !== credentials.email && user[0].username === credentials.username && (user[1] === undefined)) {
+                res.status(500).json({ usernameErr: 'username taken 4' });
+            }
+
+            else if ((user[0].username === credentials.username || user[0].email === credentials.email) && (user[1].username === credentials.username || user[1].email === credentials.email)) {
+                res.status(500).json({ emailErr: 'email taken 5', usernameErr: 'username taken 5' });
             }
         })
         .catch(err => {
-            res.status(500).json(err);
+            res.status(500).json({ err });
         });
 })
 
