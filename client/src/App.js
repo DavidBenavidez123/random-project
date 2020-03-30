@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { Route, Redirect, useHistory } from 'react-router-dom';
+import { Route, Redirect, useHistory, Switch } from 'react-router-dom';
 import socketIOClient from "socket.io-client";
 import { Link } from 'react-router-dom'
 import Register from './Components/Register/Register'
@@ -51,19 +51,28 @@ function App() {
 
   return (
     <div className="App">
-      <div>
-        <Route path="/Register" component={Register} />
-        <Route
-          path="/Login"
-          render={props => <Login {...props} getUserData={getUserData} />}
-        />
-      </div>
       {
-        authenticated &&
-        <Route
-          path="/Chat"
-          render={props => <Chat {...props} />}
-        />
+        authenticated ? (
+          <Switch>
+            <Route
+              exact
+              path="/"
+              render={props => <Chat {...props} />}
+            />
+            <Route render={() => (<Redirect to="/" />)} />
+          </Switch>
+        ) : (
+            <Switch>
+              <Route path="/Register" component={Register} />
+              <Route
+                path="/Login"
+                render={props => <Login {...props} getUserData={getUserData} />}
+              />
+              <Route render={() => (<Redirect to="/login" />)} />
+            </Switch>
+          )
+
+
       }
     </div>
   );
