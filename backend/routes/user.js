@@ -18,8 +18,6 @@ router.get('/', (req, res) => {
     res.send('hello')
 })
 
-
-
 router.post('/register', (req, res) => {
     const credentials = req.body;
     const hash = bcrypt.hashSync(credentials.password, 10);
@@ -28,40 +26,34 @@ router.post('/register', (req, res) => {
         .where('email', credentials.email)
         .orWhere('username', credentials.username)
         .then(user => {
-            console.log('-----------------------------------------------')
-            console.log(user)
             if (user === undefined || user.length == 0) {
                 return db('users')
                     .insert(credentials)
                     .then(user => {
-                        res.status(201).json({ user: user[0] });
+                        res.json({ user: user[0] });
                     })
                     .catch(err => {
-                        res.status(500).json(err);
+                        res.json(err);
                     });
             }
             else if (user[0].email === credentials.email && user[0].username === credentials.username) {
-                res.status(500).json({ emailErr: 'email taken 1', usernameErr: 'username taken 1' });
+                res.json({ emailErr: 'email taken', usernameErr: 'username taken' });
             }
-
             else if (user[0].email === credentials.email && user[0].username !== credentials.username && (user[1] === undefined)) {
-                res.status(500).json({ emailErr: 'email taken 2' });
+                res.json({ emailErr: 'email taken' });
             }
-
             else if (user[0].email === credentials.email && user[0].username !== credentials.username && (user[1] === undefined)) {
-                res.status(500).json({ usernameErr: 'username taken 3' });
+                res.json({ usernameErr: 'username taken' });
             }
-
             else if (user[0].email !== credentials.email && user[0].username === credentials.username && (user[1] === undefined)) {
-                res.status(500).json({ usernameErr: 'username taken 4' });
+                res.json({ usernameErr: 'username taken' });
             }
-
             else if ((user[0].username === credentials.username || user[0].email === credentials.email) && (user[1].username === credentials.username || user[1].email === credentials.email)) {
-                res.status(500).json({ emailErr: 'email taken 5', usernameErr: 'username taken 5' });
+                res.json({ emailErr: 'email taken', usernameErr: 'username taken' });
             }
         })
         .catch(err => {
-            res.status(500).json({ err });
+            res.json({ err });
         });
 })
 
@@ -79,10 +71,31 @@ router.post('/login', (req, res) => {
             }
         })
         .catch(err => {
-            res.status(500).json({ err });
+            res.json({ err });
         });
 })
 
+router.get('/userData', (req, res) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader
+    if (token) {
+        console.log(token)
+        jwt.verify(token, process.env.JWT_SECRET, (err, decodedToken) => {
+            if (err) {
+                // token verification failed
+                res.json({ message: 'invalid token' });
+            } else {
+                // token is valid
+                req.decodedToken = decodedToken; // any sub-sequent middleware of route handler have access to this
+                console.log('\n** decoded token information **\n', req.decodedToken);
+                const data = { user_id: req.decodedToken.users_id, userName: req.decodedToken.username }
+                res.json({ data });
+            }
+        });
+    } else {
+        res.json({ message: 'no token provided' });
+    }
+})
 
 function authorizationMiddleware(req, res, next) {
     const authHeader = req.headers.authorization;
