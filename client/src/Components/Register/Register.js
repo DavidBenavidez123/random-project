@@ -1,32 +1,82 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import './Register.css';
 import socketIOClient from "socket.io-client";
-import { Link, browserHistory } from 'react-router-dom'
-import { Input } from 'semantic-ui-react'
+import { Link, useHistory, withRouter } from 'react-router-dom'
+import { Input, Label, Form } from 'semantic-ui-react'
 import axios from 'axios'
 
-function Join() {
-    const [username, setsername] = useState('')
+function Register(props) {
+    const [username, setUsername] = useState('')
     const [email, setemail] = useState('')
     const [password, setPassword] = useState('')
     const [err, setErr] = useState('')
+    const [emailErr, setEmailErr] = useState('')
+    const [nameErr, setNameErr] = useState('')
+    const [emptyNameText, setEmptyNameText] = useState('')
+    const [emptyNameErr, setEmptyNameErr] = useState(false)
+    const [emptyEmailText, setEmptyEmailText] = useState('')
+    const [emptyEmailErr, setEmptyEmailErr] = useState(false)
+    const [emptyPasswordErr, setemptyPasswordErr] = useState(false)
+    const [emptyPasswordText, setemptyPasswordText] = useState('')
+    let history = useHistory()
 
-    const login = () => {
-        console.log('yes')
+    const Register = (e) => {
+        e.preventDefault();
         const data = { username, email, password }
-        axios.post('http://localhost:5000/api/user/register', data)
-            .then(response => {
-                console.log(response.data)
-            })
-            .catch(() => {
-                setErr({ err: 'Error' })
-            })
+        const err = fieldCheck()
+        if (err) {
+            axios.post('http://localhost:5000/api/user/register', data)
+                .then(response => {
+                    console.log('response', response.data)
+                    const error = response.data
+                    if (error.user) {
+                        history.push('/Login')
+                    }
+                    else {
+                        setEmailErr(error.emailErr)
+                        setNameErr(error.usernameErr)
+                    }
+                })
+                .catch(() => {
+                    console.log('loading')
+                    setErr('Error')
+                })
+        }
+
     }
 
     const fieldCheck = () => {
+        let isError = false
+        if (!username.length) {
+            setEmptyNameText('Username cannot be empty')
+            setEmptyNameErr(true)
+        }
+        else {
+            setEmptyNameText('')
+            setEmptyNameErr(false)
+        }
+        if (email.indexOf('@') === -1) {
+            setEmptyEmailText('This is not an email')
+            setEmptyEmailErr(true)
+        }
+        else {
+            setEmptyEmailText('')
+            setEmptyEmailErr(false)
+        }
+        if (!password.length) {
+            setemptyPasswordText('Password cannot be empty')
+            setemptyPasswordErr(true)
+        }
+        else {
+            setemptyPasswordText('')
+            setemptyPasswordErr(false)
+        }
 
+        if (username.length && email.indexOf('@') !== -1 && password.length) {
+            isError = true
+        }
+        return isError
     }
-
 
     return (
         <div className="register">
@@ -34,21 +84,34 @@ function Join() {
                 <h1 className='heading'>
                     Register
                 </h1>
-                <div>
-                    <Input placeholder='username' className='joinInput' type='text' onChange={(event) => { setsername(event.target.value) }} />
-                </div>
-                <div>
-                    <Input placeholder='Email' className='joinInput mt-20' type='text' onChange={(event) => { setemail(event.target.value) }} />
-                </div>
-                <div>
-                    <Input placeholder='Password' className='joinInput mt-20' type='text' onChange={(event) => { setPassword(event.target.value) }} />
-                </div>
-
-                <button onClick={login} className="register-button" type="submit">
+                <Form autoComplete="off">
+                    <Form.Field error={(nameErr || emptyNameErr)}>
+                        {
+                            (nameErr || emptyNameErr) &&
+                            <Label basic color='red' pointing='below'>{emptyNameText || nameErr}</Label>
+                        }
+                        <Input placeholder='username' className='joinInput' type='text' onChange={(event) => { setUsername(event.target.value) }} />
+                    </Form.Field>
+                    <Form.Field error={emailErr || emptyEmailErr}>
+                        {
+                            (emailErr || emptyEmailErr) &&
+                            <Label basic color='red' pointing='below'>{emailErr || emptyEmailText}</Label>
+                        }
+                        <Input placeholder='Email' error={emailErr} className='joinInput mt-20' type='email' onChange={(event) => { setemail(event.target.value) }} />
+                    </Form.Field>
+                    <Form.Field error={emptyPasswordErr}>
+                        {
+                            (emptyPasswordErr) &&
+                            <Label basic color='red' pointing='below'>{emptyPasswordText}</Label>
+                        }
+                        <Input placeholder='Password' className='joinInput mt-20' type='password' onChange={(event) => { setPassword(event.target.value) }} />
+                    </Form.Field>
+                </Form>
+                <button onClick={Register} className="register-button" type="submit">
                     Register
                 </button>
 
-                <div class="login">
+                <div class="register">
                     <p>Have an account?</p>
                     <Link to="/Login">
                         <p>Login</p>
@@ -60,4 +123,4 @@ function Join() {
     );
 }
 
-export default Join;
+export default withRouter(Register);

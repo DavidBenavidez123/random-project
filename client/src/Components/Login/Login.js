@@ -2,29 +2,65 @@ import React, { useState } from 'react';
 import './Login.css';
 import socketIOClient from "socket.io-client";
 import { Link, browserHistory } from 'react-router-dom'
-import { Input } from 'semantic-ui-react'
+import { Input, Form, Label } from 'semantic-ui-react'
 import axios from 'axios'
 
 function Login(props) {
-    const [username, setsername] = useState('')
+    const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [err, setErr] = useState('')
+    const [emptyNameText, setEmptyNameText] = useState('')
+    const [emptyNameErr, setEmptyNameErr] = useState(false)
+    const [emptyPasswordErr, setemptyPasswordErr] = useState(false)
+    const [emptyPasswordText, setemptyPasswordText] = useState('')
+    const [loginError, setLoginError] = useState(false)
 
     const login = () => {
-        console.log('yes')
-        const data = { username, password }
-        axios.post('http://localhost:5000/api/user/login', data)
-            .then(response => {
-                localStorage.setItem('jwt', response.data.token);
-                props.getUserData()
-            })
-            .catch(() => {
-                setErr({ err: 'Error' })
-            })
+
+        const err = fieldCheck()
+        if (err) {
+            const data = { username, password }
+            axios.post('http://localhost:5000/api/user/login', data)
+                .then(response => {
+                    if (response.data.message) {
+                        setLoginError(true)
+                    }
+                    else {
+                        localStorage.setItem('jwt', response.data.token);
+                    }
+
+                    props.getUserData()
+                })
+                .catch(() => {
+                    setErr({ err: 'Error' })
+                })
+        }
     }
+    console.log(loginError)
 
     const fieldCheck = () => {
+        let isError = false
+        if (!username.length) {
+            setEmptyNameText('Username cannot be empty')
+            setEmptyNameErr(true)
+        }
+        else {
+            setEmptyNameText('')
+            setEmptyNameErr(false)
+        }
+        if (!password.length) {
+            setemptyPasswordText('Password cannot be empty')
+            setemptyPasswordErr(true)
+        }
+        else {
+            setemptyPasswordText('')
+            setemptyPasswordErr(false)
+        }
 
+        if (username.length && password.length) {
+            isError = true
+        }
+        return isError
     }
 
     return (
@@ -33,14 +69,26 @@ function Login(props) {
                 <h1 className='heading'>
                     Login
                 </h1>
-                <div>
-                    <Input placeholder='username' className='joinInput' type='text' onChange={(event) => { setsername(event.target.value) }} />
-                </div>
+                <Form>
 
-                <div>
-                    <Input placeholder='Password' className='joinInput mt-20' type='text' onChange={(event) => { setPassword(event.target.value) }} />
-                </div>
 
+                    <Form.Field error={(emptyNameErr)}>
+                        {
+                            (emptyNameErr) &&
+                            <Label basic color='red' pointing='below'>{emptyNameText}</Label>
+                        }
+                        <Input placeholder='username' className='joinInput' type='text' onChange={(event) => { setUsername(event.target.value) }} />
+                    </Form.Field>
+
+                    <Form.Field error={emptyPasswordErr}>
+                        {
+                            (emptyPasswordErr) &&
+                            <Label basic color='red' pointing='below'>{emptyPasswordText}</Label>
+                        }
+                        <Input placeholder='Password' className='joinInput mt-20' type='password' onChange={(event) => { setPassword(event.target.value) }} />
+                    </Form.Field>
+
+                </Form>
                 <button onClick={login} className="register-button" type="submit">
                     Login
                 </button>

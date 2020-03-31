@@ -1,6 +1,5 @@
-.register {
-    margin-top: 120px;
-    margin-bottom: 30px;
+.ui.form {
+    margin-top: 80px;
 }
 
 .register-content {
@@ -9,15 +8,19 @@
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     margin: 0 auto;
     padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.register {
+    padding-top: 120px;
+    margin-bottom: 30px;
 }
 
 label {
     text-align: start;
 }
 
-.ui.form {
-    margin-top: 30px;
-}
 
 .register-button {
     height: 36px;
@@ -45,6 +48,10 @@ label {
 
 
 @media only screen and (max-width: 600px) {
+    .register {
+        padding-top: 75px;
+    }
+
     .register-content {
         width: 300px;
         height: 600px;
@@ -52,10 +59,16 @@ label {
 }
 
 @media only screen and (max-width: 400px) {
+
     .register {
         margin-bottom: 100px;
     }
+
+    .register {
+        padding-top: 35px;
+    }
 }
+
 
 @media only screen and (max-width: 320px) {
     .register {

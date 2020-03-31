@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { Route, Redirect, useHistory, Switch } from 'react-router-dom';
 import socketIOClient from "socket.io-client";
-import { Link } from 'react-router-dom'
 import Register from './Components/Register/Register'
 import Login from './Components/Login/Login'
 import axios from 'axios'
@@ -13,6 +11,7 @@ function App() {
   const [user, setUser] = useState('')
   const [err, setErr] = useState('')
   const [authenticated, setAuthenticated] = useState(false)
+
   useEffect(() => {
     getUserData()
   }, [])
@@ -62,14 +61,18 @@ function App() {
             <Route render={() => (<Redirect to="/" />)} />
           </Switch>
         ) : (
+
             <Switch>
+
               <Route path="/Register" component={Register} />
               <Route
                 path="/Login"
                 render={props => <Login {...props} getUserData={getUserData} />}
               />
               <Route render={() => (<Redirect to="/login" />)} />
+
             </Switch>
+            
           )
 
 
