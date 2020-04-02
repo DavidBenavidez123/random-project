@@ -22,7 +22,7 @@ function Chat(props) {
 
     useEffect(() => {
         firstLoad()
-        socketRef.current = socketIOClient('http://localhost:5000')
+        socketRef.current = socketIOClient('https://chat-backend-1.herokuapp.com/')
         loadMessages()
         return () => {
             socketRef.current.disconnect();
@@ -54,7 +54,7 @@ function Chat(props) {
 
     const firstLoad = () => {
 
-        axios.get('http://localhost:5000/api/message')
+        axios.get('http://localhost:5000/api/message' || 'https://chat-backend-1.herokuapp.com/')
             .then(res => {
                 console.log('loading message')
                 setMessages(res.data.messages)
@@ -64,13 +64,13 @@ function Chat(props) {
             })
     }
 
-    
+
 
     const loadScroll = (data) => {
         setLoading(true)
         let scroll = document.querySelector('.css-y1c0xs')
         const offSet = { data }
-        axios.post('http://localhost:5000/api/message/scroll', offSet)
+        axios.post('http://localhost:5000/api/message/scroll' || 'https://chat-backend-1.herokuapp.com/', offSet)
             .then(res => {
                 setLoading(false)
                 scroll.scrollTop = 10

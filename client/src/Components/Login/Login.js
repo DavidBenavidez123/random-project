@@ -21,11 +21,11 @@ function Login(props) {
         if (err) {
             setloginButton('Logging In...')
             const data = { username, password }
-            axios.post('http://localhost:5000/api/user/login', data)
+            axios.post('https://chat-backend-1.herokuapp.com/api/user/login', data)
                 .then(response => {
                     if (response.data.message) {
                         setLoginError(true)
-                        setloginButton('Log In')
+
                     }
                     else {
                         localStorage.setItem('jwt', response.data.token);
@@ -34,6 +34,7 @@ function Login(props) {
                     props.getUserData()
                 })
                 .catch(() => {
+                    setloginButton('Login')
                     setErr({ err: 'Error' })
                 })
         }
@@ -77,7 +78,7 @@ function Login(props) {
                             (emptyNameErr) &&
                             <Label basic color='red' pointing='below'>{emptyNameText}</Label>
                         }
-                        <Input placeholder='username' className='joinInput'  onChange={(event) => { setUsername(event.target.value) }} />
+                        <Input placeholder='username' className='joinInput' onChange={(event) => { setUsername(event.target.value) }} />
                     </Form.Field>
                     <Form.Field error={emptyPasswordErr || loginError}>
                         {
