@@ -1,8 +1,12 @@
 .Chat {
-    margin: 0 auto;
     width: 600px;
     display: flex;
     flex-direction: column;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    /* bring your own prefixes */
+    transform: translate(-50%, -50%);
     padding: 30px 10px 10px 10px;
     height: 800px;
     border: 1px solid #d4d4d5;
@@ -34,24 +38,28 @@
 
 .User-Own-Message {
     margin-left: 200px;
-    padding: 15px;
+    padding: 10px;
     border-radius: 15px;
     margin-right: 10px;
     margin-bottom: 20px;
     float: right;
+    text-align: right;
 }
 
 .User-Recipient-Message {
+    padding: 10px;
     margin-right: 200px;
     margin-bottom: 20px;
     float: left;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
 }
 
 .User-Recipient-Message p {
-    padding: 15px;
     font-size: 16px;
     border-radius: 15px;
-    display: inline-block;
+    width: 100%;
 }
 
 .User-Own-Message p {

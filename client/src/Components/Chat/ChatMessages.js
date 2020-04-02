@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Linkify from 'react-linkify';
 
 export default class MessageList extends Component {
 
@@ -7,12 +8,13 @@ export default class MessageList extends Component {
             <div className={(this.props.sentByUser) ? 'User-Own-Message' : 'User-Recipient-Message'}>
 
                 <h3>
-                {this.props.message.username}
+                    {this.props.message.username}
                 </h3>
-                <p>
-                {this.props.message.message}
-                </p>
-                
+                <Linkify>
+                    <p>
+                        {this.props.message.message}
+                    </p>
+                </Linkify>
             </div>
 
         );

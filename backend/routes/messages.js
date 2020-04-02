@@ -9,14 +9,34 @@ require('dotenv').config()
 
 router.get('/', (req, res) => {
     db('messages')
+        .orderBy('created_at', 'desc')
+        .limit(10)
         .then(messages => {
+            messages.reverse()
             res.send({ messages })
         })
         .catch(err => {
             res.send({ err })
         })
-
 })
+
+router.post('/scroll', (req, res) => {
+    const { data } = req.body
+    console.log(data)
+    db('messages')
+        .orderBy('created_at', 'desc')
+        .limit(10)
+        .offset(data)
+        .then(messages => {
+            messages.reverse()
+            res.send({ messages })
+        })
+        .catch(err => {
+            res.send({ err })
+        })
+})
+
+
 
 function authorizationMiddleware(req, res, next) {
     const authHeader = req.body.headers.Authorization;

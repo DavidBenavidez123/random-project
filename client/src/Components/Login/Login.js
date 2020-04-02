@@ -25,6 +25,7 @@ function Login(props) {
                 .then(response => {
                     if (response.data.message) {
                         setLoginError(true)
+                        setloginButton('Log In')
                     }
                     else {
                         localStorage.setItem('jwt', response.data.token);
@@ -76,7 +77,7 @@ function Login(props) {
                             (emptyNameErr) &&
                             <Label basic color='red' pointing='below'>{emptyNameText}</Label>
                         }
-                        <Input placeholder='username' className='joinInput' type='text' onChange={(event) => { setUsername(event.target.value) }} />
+                        <Input placeholder='username' className='joinInput'  onChange={(event) => { setUsername(event.target.value) }} />
                     </Form.Field>
                     <Form.Field error={emptyPasswordErr || loginError}>
                         {

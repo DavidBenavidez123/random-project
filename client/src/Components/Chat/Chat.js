@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Chat.css';
 import socketIOClient from "socket.io-client";
-import { Link, browserHistory } from 'react-router-dom'
-import { Input } from 'semantic-ui-react'
+import { Input, Loader } from 'semantic-ui-react'
 import axios from 'axios'
 import ScrollToBottom from 'react-scroll-to-bottom';
 import ChatMessages from './ChatMessages'
@@ -14,8 +13,11 @@ const ROOT_CSS = css({
 
 
 function Chat(props) {
+    let data = 0
     const [messages, setMessages] = useState([])
     const [message, setMessage] = useState('')
+    const [moreMessages, setMoreMessages] = useState(10)
+    const [loading, setLoading] = useState(false)
     const socketRef = useRef();
     useEffect(() => {
         firstLoad()
@@ -23,6 +25,22 @@ function Chat(props) {
         loadMessages()
         return () => {
             socketRef.current.disconnect();
+        }
+    }, [])
+
+    useEffect(() => {
+        let scroll = document.querySelector('.css-y1c0xs')
+        scroll.addEventListener('scroll', () => {
+            let x = scroll.scrollTop
+            if (x == 0) {
+                setLoading(true)
+                setTimeout(() => {
+                    loadScroll(data += 10)
+                }, 500);
+            }
+        })
+        return () => {
+            scroll.removeEventListener('scroll', loadScroll);
         }
     }, [])
 
@@ -45,24 +63,38 @@ function Chat(props) {
             })
     }
 
+    const loadScroll = (data) => {
+        const offSet = { data }
+
+        axios.post('http://localhost:5000/api/message/scroll', offSet)
+            .then(res => {
+                setLoading(false)
+                setMessages(messages => [...res.data.messages, ...messages])
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+
     const loadMessages = () => {
         socketRef.current.on("sending message", (message) => {
             setMessages(newMessage => [...newMessage, message])
         })
     }
-
     return (
         <div className="Chat">
             Chat
             <div className="messages-scroll">
-                <ScrollToBottom className={ROOT_CSS}>
+                <ScrollToBottom onScroll={null} className={ROOT_CSS}>
+                    {loading &&
+                        <Loader active inline='centered' />
+                    }
                     {messages.map((message, id) => (
                         <ChatMessages key={id} message={message} sentByUser={message.users_id === props.user.user_id} />
                     )
                     )}
                 </ScrollToBottom>
             </div>
-
             <div className="Messages-Text-Box">
                 <textarea
                     id="story"
@@ -76,9 +108,6 @@ function Chat(props) {
                     }}
                 >
                 </textarea>
-                <section className="attachment-container">
-
-                </section>
             </div>
         </div>
     );

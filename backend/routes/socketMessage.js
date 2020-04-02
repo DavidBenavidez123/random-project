@@ -10,7 +10,15 @@ module.exports = function (io) {
             db('messages')
                 .insert(text)
                 .then(text => {
-                    io.emit('sending message', msg);
+                    return db('messages')
+                        .where('messages_id', text[0])
+                        .then(text => {
+                            console.log(text[0])
+                            io.emit('sending message', text[0]);
+                        })
+                        .catch(err => {
+                            io.emit(err);
+                        })
                 })
                 .catch(err => {
                     io.emit(err);
