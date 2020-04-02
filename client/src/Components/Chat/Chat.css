@@ -1,5 +1,5 @@
 .Chat {
-    width: 600px;
+    width: 800px;
     display: flex;
     flex-direction: column;
     position: fixed;
@@ -10,7 +10,9 @@
     padding: 30px 10px 10px 10px;
     height: 800px;
     border: 1px solid #d4d4d5;
+    background-color: #F7F8FB;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 20px;
 }
 
 .Messages-Text-Box {
@@ -21,8 +23,9 @@
 
 
 .Messages-Text-Box textarea {
+    outline: none;
     width: 100%;
-    border: 1px solid rgb(199, 194, 194);
+    border: none;
     padding: 1em 1em 5em;
     border-radius: 2px;
     letter-spacing: 1px;
@@ -30,6 +33,10 @@
     margin-bottom: 0.5em;
     font-size: 1.0rem;
     resize: none;
+    box-shadow: 0 5px 10px rgba(154, 160, 185, .05), 0 15px 40px rgba(166, 173, 201, .2);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
 }
 
 .attachment-container p {
@@ -52,18 +59,28 @@
     margin-bottom: 20px;
     float: left;
     text-align: left;
-    display: flex;
-    flex-direction: column;
 }
 
 .User-Recipient-Message p {
+    display: inline-block;
     font-size: 16px;
-    border-radius: 15px;
-    width: 100%;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    padding: 15px 15px 15px 15px;
+    background-color: white;
+    box-shadow: 0 5px 10px rgba(154, 160, 185, .05), 0 15px 40px rgba(166, 173, 201, .2);
 }
 
 .User-Own-Message p {
+    display: inline-block;
     font-size: 16px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+    padding: 15px 15px 15px 15px;
+    background-color: #FAFBFF;
+    box-shadow: 0 5px 10px rgba(154, 160, 185, .05), 0 15px 40px rgba(166, 173, 201, .2);
 }
 
 .User-Recipient-Message h3 {
@@ -71,7 +88,8 @@
     color: teal;
     font-size: 12px;
     font-weight: 100;
-    display: inline-block;
+    display: block;
+    padding: 10px 0px 10px 10px;
 }
 
 .User-Own-Message h3 {
@@ -79,7 +97,7 @@
     color: teal;
     font-size: 12px;
     font-weight: 100;
-    display: inline-block;
+    display: block;
 }
 
 .css-y1c0xs {
