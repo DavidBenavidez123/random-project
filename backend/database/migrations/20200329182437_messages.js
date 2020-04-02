@@ -8,8 +8,11 @@ exports.up = function (knex) {
         messages
             .string('message')
             .notNullable()
+        messages
+            .string('username')
+            .notNullable()
         messages.timestamps(true, true)
-        
+
     });
 
 };

@@ -14,11 +14,12 @@ function Login(props) {
     const [emptyPasswordErr, setemptyPasswordErr] = useState(false)
     const [emptyPasswordText, setemptyPasswordText] = useState('')
     const [loginError, setLoginError] = useState(false)
+    const [loginButton, setloginButton] = useState('Login')
 
     const login = () => {
-
         const err = fieldCheck()
         if (err) {
+            setloginButton('Logging In...')
             const data = { username, password }
             axios.post('http://localhost:5000/api/user/login', data)
                 .then(response => {
@@ -70,29 +71,28 @@ function Login(props) {
                     Login
                 </h1>
                 <Form>
-
-
-                    <Form.Field error={(emptyNameErr)}>
+                    <Form.Field error={(emptyNameErr || loginError)}>
                         {
                             (emptyNameErr) &&
                             <Label basic color='red' pointing='below'>{emptyNameText}</Label>
                         }
                         <Input placeholder='username' className='joinInput' type='text' onChange={(event) => { setUsername(event.target.value) }} />
                     </Form.Field>
-
-                    <Form.Field error={emptyPasswordErr}>
+                    <Form.Field error={emptyPasswordErr || loginError}>
                         {
                             (emptyPasswordErr) &&
                             <Label basic color='red' pointing='below'>{emptyPasswordText}</Label>
                         }
                         <Input placeholder='Password' className='joinInput mt-20' type='password' onChange={(event) => { setPassword(event.target.value) }} />
                     </Form.Field>
-
+                    {
+                        (loginError) &&
+                        <Label basic color='red' pointing>Username/Password is incorrect</Label>
+                    }
                 </Form>
                 <button onClick={login} className="register-button" type="submit">
-                    Login
+                    {loginButton}
                 </button>
-
                 <div class="register">
                     <p>Don't have an account?</p>
                     <Link to="/Register">

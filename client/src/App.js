@@ -28,7 +28,6 @@ function App() {
     axios
       .get('http://localhost:5000/api/user/userData', options)
       .then(res => {
-        console.log(res.data);
         setUser(res.data.data)
         checkAuthentication(res.data)
       })
@@ -56,26 +55,20 @@ function App() {
             <Route
               exact
               path="/"
-              render={props => <Chat {...props} />}
+              render={props => <Chat {...props} user={user} />}
             />
             <Route render={() => (<Redirect to="/" />)} />
           </Switch>
         ) : (
-
             <Switch>
-
               <Route path="/Register" component={Register} />
               <Route
                 path="/Login"
                 render={props => <Login {...props} getUserData={getUserData} />}
               />
               <Route render={() => (<Redirect to="/login" />)} />
-
             </Switch>
-            
           )
-
-
       }
     </div>
   );

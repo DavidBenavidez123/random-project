@@ -1,6 +1,5 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import './Register.css';
-import socketIOClient from "socket.io-client";
 import { Link, useHistory, withRouter } from 'react-router-dom'
 import { Input, Label, Form } from 'semantic-ui-react'
 import axios from 'axios'
@@ -18,6 +17,7 @@ function Register(props) {
     const [emptyEmailErr, setEmptyEmailErr] = useState(false)
     const [emptyPasswordErr, setemptyPasswordErr] = useState(false)
     const [emptyPasswordText, setemptyPasswordText] = useState('')
+    const [registerButton, setregisterButton] = useState('Register')
     let history = useHistory()
 
     const Register = (e) => {
@@ -25,6 +25,7 @@ function Register(props) {
         const data = { username, email, password }
         const err = fieldCheck()
         if (err) {
+            setregisterButton('Registering...')
             axios.post('http://localhost:5000/api/user/register', data)
                 .then(response => {
                     console.log('response', response.data)
@@ -108,7 +109,7 @@ function Register(props) {
                     </Form.Field>
                 </Form>
                 <button onClick={Register} className="register-button" type="submit">
-                    Register
+                    {registerButton}
                 </button>
 
                 <div class="register">

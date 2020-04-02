@@ -58,6 +58,7 @@ router.post('/register', (req, res) => {
 })
 
 router.post('/login', (req, res) => {
+  
     const creds = req.body;
     db('users')
         .where({ username: creds.username })
@@ -79,7 +80,6 @@ router.get('/userData', (req, res) => {
     const authHeader = req.headers.authorization;
     const token = authHeader
     if (token) {
-        console.log(token)
         jwt.verify(token, process.env.JWT_SECRET, (err, decodedToken) => {
             if (err) {
                 // token verification failed

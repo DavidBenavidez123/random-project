@@ -1,0 +1,84 @@
+.Chat {
+    margin: 0 auto;
+    width: 600px;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 10px 10px 10px;
+    height: 800px;
+    border: 1px solid #d4d4d5;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.Messages-Text-Box {
+    border-top: 1px solid #F4F4F4;
+    margin-top: 20px;
+    margin-bottom: -40px;
+}
+
+
+.Messages-Text-Box textarea {
+    width: 100%;
+    border: 1px solid rgb(199, 194, 194);
+    padding: 1em 1em 5em;
+    border-radius: 2px;
+    letter-spacing: 1px;
+    line-height: 1.5em;
+    margin-bottom: 0.5em;
+    font-size: 1.0rem;
+    resize: none;
+}
+
+.attachment-container p {
+    cursor: pointer;
+}
+
+.User-Own-Message {
+    margin-left: 200px;
+    padding: 15px;
+    border-radius: 15px;
+    margin-right: 10px;
+    margin-bottom: 20px;
+    float: right;
+}
+
+.User-Recipient-Message {
+    margin-right: 200px;
+    margin-bottom: 20px;
+    float: left;
+}
+
+.User-Recipient-Message p {
+    padding: 15px;
+    font-size: 16px;
+    border-radius: 15px;
+    display: inline-block;
+}
+
+.User-Own-Message p {
+    font-size: 16px;
+}
+
+.User-Recipient-Message h3 {
+    margin-bottom: 2px;
+    color: teal;
+    font-size: 12px;
+    font-weight: 100;
+    display: inline-block;
+}
+
+.User-Own-Message h3 {
+    margin-bottom: 2px;
+    color: teal;
+    font-size: 12px;
+    font-weight: 100;
+    display: inline-block;
+}
+
+.css-y1c0xs {
+    display: flex;
+    flex-direction: column;
+}
+
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+}
