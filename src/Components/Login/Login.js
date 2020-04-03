@@ -92,7 +92,6 @@ function Login(props) {
                     }
                 </Form>
                 
-
                 {loginButton.length ? (
                     <button onClick={login} className="register-button" type="submit">
                         {loginButton}
@@ -102,7 +101,6 @@ function Login(props) {
                             <Loader active />
                         </div>
                     )}
-
 
                 <div class="register">
                     <p>Don't have an account?</p>
