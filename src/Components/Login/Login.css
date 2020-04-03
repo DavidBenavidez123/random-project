@@ -14,7 +14,7 @@
 
 .register {
     padding-top: 120px;
-    margin-bottom: 30px;
+
 }
 
 label {
@@ -61,17 +61,16 @@ label {
 @media only screen and (max-width: 400px) {
 
     .register {
-        margin-bottom: 100px;
-    }
-
-    .register {
         padding-top: 35px;
     }
 }
 
 
-@media only screen and (max-width: 320px) {
-    .register {
-        margin-bottom: 190px;
+
+
+@media only screen and (max-width: 360px) {
+    .register-content {
+        height: 550px;
     }
+
 }

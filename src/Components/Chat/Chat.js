@@ -18,11 +18,8 @@ function Chat(props) {
     let data = 0
     const [messages, setMessages] = useState([])
     const [message, setMessage] = useState('')
-    const [moreMessages, setMoreMessages] = useState(10)
     const [loading, setLoading] = useState(false)
     const socketRef = useRef();
-
-    let history = useHistory();
 
     useEffect(() => {
         firstLoad()
@@ -37,6 +34,7 @@ function Chat(props) {
         let scroll = document.querySelector('.css-y1c0xs')
         scroll.addEventListener('scroll', () => {
             let x = scroll.scrollTop
+            console.log(x)
             if (x == 0) {
                 setTimeout(() => {
                     loadScroll(data += 10)
@@ -56,7 +54,7 @@ function Chat(props) {
         setMessage('')
     }
     const firstLoad = () => {
-        axios.get('http://localhost:5000/api/message' || 'https://chat-backend-1.herokuapp.com/')
+        axios.get('https://chat-backend-1.herokuapp.com/api/message')
             .then(res => {
                 console.log('loading message')
                 setMessages(res.data.messages)
@@ -72,7 +70,7 @@ function Chat(props) {
         setLoading(true)
         let scroll = document.querySelector('.css-y1c0xs')
         const offSet = { data }
-        axios.post('http://localhost:5000/api/message/scroll' || 'https://chat-backend-1.herokuapp.com/', offSet)
+        axios.post('https://chat-backend-1.herokuapp.com/api/message/scroll', offSet)
             .then(res => {
                 setLoading(false)
                 scroll.scrollTop = 10
@@ -103,9 +101,8 @@ function Chat(props) {
             </div>
 
             <div className="Chat">
-                Chat
-            <div className="messages-scroll">
-                    <ScrollToBottom atTop={true} className={ROOT_CSS}>
+                <div className="messages-scroll">
+                    <ScrollToBottom atTop={true} className='chat-box'>
                         {loading &&
                             <Loader active inline='centered' />
                         }
@@ -134,5 +131,7 @@ function Chat(props) {
         </div>
     );
 }
+
+
 
 export default Chat;
