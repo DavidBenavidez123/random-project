@@ -44,7 +44,6 @@ function App() {
     else {
       setAuthenticated(true)
     }
-
   }
 
   return (
@@ -55,7 +54,7 @@ function App() {
             <Route
               exact
               path="/"
-              render={props => <Chat {...props} user={user} />}
+              render={props => <Chat {...props} getUserData={getUserData} user={user} />}
             />
             <Route render={() => (<Redirect to="/" />)} />
           </Switch>

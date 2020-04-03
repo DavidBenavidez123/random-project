@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import './Login.css';
 import socketIOClient from "socket.io-client";
-import { Link, browserHistory } from 'react-router-dom'
-import { Input, Form, Label } from 'semantic-ui-react'
+import { Link, } from 'react-router-dom'
+import { Input, Form, Label, Loader } from 'semantic-ui-react'
 import axios from 'axios'
 
 function Login(props) {
@@ -19,18 +19,17 @@ function Login(props) {
     const login = () => {
         const err = fieldCheck()
         if (err) {
-            setloginButton('Logging In...')
+            setloginButton('')
             const data = { username, password }
             axios.post('https://chat-backend-1.herokuapp.com/api/user/login', data)
                 .then(response => {
                     if (response.data.message) {
                         setLoginError(true)
-
+                        setloginButton('Login')
                     }
                     else {
                         localStorage.setItem('jwt', response.data.token);
                     }
-
                     props.getUserData()
                 })
                 .catch(() => {
@@ -39,8 +38,8 @@ function Login(props) {
                 })
         }
     }
-    console.log(loginError)
 
+    console.log(loginError)
     const fieldCheck = () => {
         let isError = false
         if (!username.length) {
@@ -92,9 +91,19 @@ function Login(props) {
                         <Label basic color='red' pointing>Username/Password is incorrect</Label>
                     }
                 </Form>
-                <button onClick={login} className="register-button" type="submit">
-                    {loginButton}
-                </button>
+                
+
+                {loginButton.length ? (
+                    <button onClick={login} className="register-button" type="submit">
+                        {loginButton}
+                    </button>
+                ) : (
+                        <div className='loader'>
+                            <Loader active />
+                        </div>
+                    )}
+
+
                 <div class="register">
                     <p>Don't have an account?</p>
                     <Link to="/Register">

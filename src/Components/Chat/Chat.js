@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useHistory } from 'react-router-dom';
 import './Chat.css';
 import socketIOClient from "socket.io-client";
 import { Input, Loader } from 'semantic-ui-react'
@@ -12,6 +13,7 @@ const ROOT_CSS = css({
 });
 
 
+
 function Chat(props) {
     let data = 0
     const [messages, setMessages] = useState([])
@@ -19,6 +21,8 @@ function Chat(props) {
     const [moreMessages, setMoreMessages] = useState(10)
     const [loading, setLoading] = useState(false)
     const socketRef = useRef();
+
+    let history = useHistory();
 
     useEffect(() => {
         firstLoad()
@@ -51,9 +55,7 @@ function Chat(props) {
         socketRef.current.emit("sending message", data)
         setMessage('')
     }
-
     const firstLoad = () => {
-
         axios.get('http://localhost:5000/api/message' || 'https://chat-backend-1.herokuapp.com/')
             .then(res => {
                 console.log('loading message')
@@ -87,34 +89,47 @@ function Chat(props) {
         })
     }
 
+    const logout = () => {
+        localStorage.clear('jwt')
+        window.location.reload();
+    }
+
     return (
-        <div className="Chat">
-            Chat
-            <div className="messages-scroll">
-                <ScrollToBottom atTop={true} className={ROOT_CSS}>
-                    {loading &&
-                        <Loader active inline='centered' />
-                    }
-                    {messages.map((message, id) => (
-                        <ChatMessages key={id} message={message} sentByUser={message.users_id === props.user.user_id} />
-                    )
-                    )}
-                </ScrollToBottom>
+        <div>
+            <div className='logout'>
+                <p onClick={logout}>
+                    logout
+                </p>
             </div>
-            <div className="Messages-Text-Box">
-                <textarea
-                    id="story"
-                    placeholder='Say something...'
-                    value={message}
-                    name='description'
-                    onChange={(event) => { setMessage(event.target.value) }}
-                    onKeyDown={(event) => {
-                        if (event.key === "Enter" && message.length && !event.shiftKey) {
-                            sendMessages()
+
+            <div className="Chat">
+                Chat
+            <div className="messages-scroll">
+                    <ScrollToBottom atTop={true} className={ROOT_CSS}>
+                        {loading &&
+                            <Loader active inline='centered' />
                         }
-                    }}
-                >
-                </textarea>
+                        {messages.map((message, id) => (
+                            <ChatMessages key={id} message={message} sentByUser={message.users_id === props.user.user_id} />
+                        )
+                        )}
+                    </ScrollToBottom>
+                </div>
+                <div className="Messages-Text-Box">
+                    <textarea
+                        id="story"
+                        placeholder='Say something...'
+                        value={message}
+                        name='description'
+                        onChange={(event) => { setMessage(event.target.value) }}
+                        onKeyDown={(event) => {
+                            if (event.key === "Enter" && message.length && !event.shiftKey) {
+                                sendMessages()
+                            }
+                        }}
+                    >
+                    </textarea>
+                </div>
             </div>
         </div>
     );
