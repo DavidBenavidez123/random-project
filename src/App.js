@@ -5,6 +5,7 @@ import socketIOClient from "socket.io-client";
 import Register from './Components/Register/Register'
 import Login from './Components/Login/Login'
 import axios from 'axios'
+import Header from './Components/MobileHeader/Header'
 import Chat from './Components/Chat/Chat'
 
 function App() {
@@ -50,14 +51,17 @@ function App() {
     <div className="App">
       {
         authenticated ? (
-          <Switch>
-            <Route
-              exact
-              path="/"
-              render={props => <Chat {...props} getUserData={getUserData} user={user} />}
-            />
-            <Route render={() => (<Redirect to="/" />)} />
-          </Switch>
+          <div>
+            <Header />
+            <Switch>
+              <Route
+                exact
+                path="/"
+                render={props => <Chat {...props} getUserData={getUserData} user={user} />}
+              />
+              <Route render={() => (<Redirect to="/" />)} />
+            </Switch>
+          </div>
         ) : (
             <Switch>
               <Route path="/Register" component={Register} />
@@ -67,6 +71,7 @@ function App() {
               />
               <Route render={() => (<Redirect to="/login" />)} />
             </Switch>
+
           )
       }
     </div>
