@@ -2,16 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import './Chat.css';
 import socketIOClient from "socket.io-client";
-import { Input, Loader } from 'semantic-ui-react'
+import { Input, Loader, Icon } from 'semantic-ui-react'
 import axios from 'axios'
 import ScrollToBottom from 'react-scroll-to-bottom';
 import ChatMessages from './ChatMessages'
-import { css } from 'glamor';
-
-const ROOT_CSS = css({
-    height: 570,
-});
-
+import Picker from 'emoji-picker-react';
 
 
 function Chat(props) {
@@ -19,12 +14,20 @@ function Chat(props) {
     const [messages, setMessages] = useState([])
     const [message, setMessage] = useState('')
     const [loading, setLoading] = useState(false)
+    const [editInput, setEditInput] = useState(false)
     const socketRef = useRef();
+    const [showEmoji, setShowEmoji] = useState(false);
+
+    const onEmojiClick = (event, emojiObject) => {
+        setMessage(message => message + emojiObject.emoji);
+    }
 
     useEffect(() => {
         firstLoad()
-        socketRef.current = socketIOClient('https://chat-backend-1.herokuapp.com/')
+        socketRef.current = socketIOClient('http://localhost:5000')
         loadMessages()
+        loadupdateMessages()
+        loadDeleteMessages()
         return () => {
             socketRef.current.disconnect();
         }
@@ -34,7 +37,6 @@ function Chat(props) {
         let scroll = document.querySelector('.css-y1c0xs')
         scroll.addEventListener('scroll', () => {
             let x = scroll.scrollTop
-            console.log(x)
             if (x == 0) {
                 setTimeout(() => {
                     loadScroll(data += 10)
@@ -53,8 +55,16 @@ function Chat(props) {
         socketRef.current.emit("sending message", data)
         setMessage('')
     }
+
+
+    const loadMessages = () => {
+        socketRef.current.on("sending message", (message) => {
+            setMessages(newMessage => [...newMessage, message])
+        })
+    }
+
     const firstLoad = () => {
-        axios.get('https://chat-backend-1.herokuapp.com/api/message')
+        axios.get('http://localhost:5000/api/message')
             .then(res => {
                 console.log('loading message')
                 setMessages(res.data.messages)
@@ -64,13 +74,11 @@ function Chat(props) {
             })
     }
 
-
-
     const loadScroll = (data) => {
         setLoading(true)
         let scroll = document.querySelector('.css-y1c0xs')
         const offSet = { data }
-        axios.post('https://chat-backend-1.herokuapp.com/api/message/scroll', offSet)
+        axios.post('http://localhost:5000/api/message/scroll', offSet)
             .then(res => {
                 setLoading(false)
                 scroll.scrollTop = 10
@@ -81,35 +89,68 @@ function Chat(props) {
             })
     }
 
-    const loadMessages = () => {
-        socketRef.current.on("sending message", (message) => {
-            setMessages(newMessage => [...newMessage, message])
+    const updateMessages = (id, text) => {
+        const message = { id, text }
+        socketRef.current.emit("updating message", message)
+    }
+
+    const loadupdateMessages = () => {
+        socketRef.current.on("updating message", (message) => {
+            const id = message.id
+            const text = message.text
+            setMessages(newMessage => {
+                const messageArray = [...newMessage]
+                messageArray.forEach(message => {
+                    if (message.messages_id === id) {
+                        message.message = text
+                    }
+                })
+                return messageArray
+            })
         })
     }
 
-    const logout = () => {
-        localStorage.clear('jwt')
-        window.location.reload();
+    const deleteMessages = (id) => {
+        socketRef.current.emit("deleting message", id)
+    }
+
+    const loadDeleteMessages = () => {
+        socketRef.current.on("deleting message", (message) => {
+            const id = message
+            setMessages(newMessage => newMessage.filter(message => message.messages_id !== id))
+        })
+    }
+
+
+    const editMessageTrue = () => {
+        setEditInput(true)
+    }
+
+    const editMessageFalse = () => {
+        setEditInput(false)
     }
 
     return (
         <div>
-            <div className='logout'>
-                <p onClick={logout}>
-                    logout
-                </p>
-            </div>
-
             <div className="Chat">
                 <div className="messages-scroll">
                     <ScrollToBottom atTop={true} className='chat-box'>
                         {loading &&
                             <Loader active inline='centered' />
                         }
-                        {messages.map((message, id) => (
-                            <ChatMessages key={id} message={message} sentByUser={message.users_id === props.user.user_id} />
-                        )
-                        )}
+                        {messages.map((message, index) => {
+                            return <ChatMessages
+                                editMessageTrue={editMessageTrue}
+                                editMessageFalse={editMessageFalse}
+                                index={index}
+                                deleteMessages={deleteMessages}
+                                updateMessages={updateMessages}
+                                key={message.messages_id}
+                                id={message.messages_id}
+                                message={message} sentByUser={message.users_id === props.user.user_id}
+                                editInput={editInput}
+                            />;
+                        })}
                     </ScrollToBottom>
                 </div>
                 <div className="Messages-Text-Box">
@@ -120,12 +161,18 @@ function Chat(props) {
                         name='description'
                         onChange={(event) => { setMessage(event.target.value) }}
                         onKeyDown={(event) => {
-                            if (event.key === "Enter" && message.length && !event.shiftKey) {
+                            if (event.key === "Enter" && (message.replace(/\s/g, "") !== "") && !event.shiftKey) {
                                 sendMessages()
+                                event.preventDefault();
                             }
                         }}
                     >
                     </textarea>
+                    <Icon onClick={() => { setShowEmoji(!showEmoji) }} size='large' name='smile outline' />
+                    {
+                        showEmoji &&
+                        <Picker onEmojiClick={onEmojiClick} />
+                    }
                 </div>
             </div>
         </div>

@@ -87,6 +87,17 @@
     box-shadow: 0 5px 10px rgba(154, 160, 185, .05), 0 15px 40px rgba(166, 173, 201, .2);
 }
 
+.User-Own-Message textarea {
+    outline: none;
+    resize: none;
+    font-size: 16px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+    padding: 15px 15px 15px 15px;
+    background-color: #FAFBFF;
+}
+
 .User-Recipient-Message h3 {
     margin-bottom: 2px;
     color: teal;
@@ -118,6 +129,23 @@
     padding: 20px;
 }
 
+.edit-delete h4 {
+    font-size: 12px;
+    cursor: pointer;
+    margin: 0px;
+}
+
+.edit-delete h4:nth-child(1) {
+    margin-right: 7px;
+}
+
+.edit-delete {
+    margin: 0px;
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+}
+
 .logout p {
     margin: auto;
     height: 36px;
@@ -136,8 +164,37 @@
     cursor: pointer;
 }
 
+.icon-cancel {
+    display: flex;
+    align-items: baseline;
+    margin-right: 7px;
+}
+
+.icon-cancel i.icon.outline {
+    cursor: pointer;
+    margin-right: 7px;
+}
+
 .chat-box {
     height: 570;
+}
+
+.User-Own-Message aside.emoji-picker-react {
+    position: absolute;
+    bottom: -20px;
+    left: 200px;
+    z-index: 5;
+}
+
+aside.emoji-picker-react {
+    position: absolute;
+    bottom: 460px;
+    left: 500px;
+}
+
+.Messages-Text-Box i.icon.outline {
+    float: right;
+    cursor: pointer;
 }
 
 @media only screen and (max-width: 965px) {
@@ -217,7 +274,8 @@
     }
 }
 
-@media only screen and (max-width: 320px), (max-height: 600px) {
+@media only screen and (max-width: 320px),
+(max-height: 600px) {
     .css-y1c0xs {
         height: 405px !important;
     }

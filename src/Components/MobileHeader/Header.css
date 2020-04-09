@@ -1,36 +1,27 @@
 .Header {
-    display: none;
+    display: flex;
+    position: fixed;
+    background-color: #2E3651;
+    width: 100vw;
+    height: 48px;
+    z-index: 2;
+}
+.logout-header p {
+    height: 36px;
+    width: 100px;
+    line-height: 32px;
+    border-radius: 20px;
+    border: 2px solid #fe4066;
+    box-sizing: border-box;
+    color: white;
+    text-align: center;
+    display: block;
+    background-color: #fe4066;
+    font-size: 17px;
+    margin: auto;
+    cursor: pointer;
 }
 
-@media only screen and (max-width: 450px) {
-    .Header {
-        display: flex;
-        position: fixed;
-        background-color: #2E3651;
-        width: 100vw;
-        height: 48px;
-        z-index: 2;
-    }
-
-    .logout-header p {
-
-        height: 36px;
-        width: 100px;
-        line-height: 32px;
-        border-radius: 20px;
-        border: 2px solid #fe4066;
-        box-sizing: border-box;
-        color: white;
-        text-align: center;
-        display: block;
-        background-color: #fe4066;
-        font-size: 17px;
-        margin: auto;
-        cursor: pointer;
-    }
-
-    .logout-header {
-        margin: auto auto;
-    }
-
+.logout-header {
+    margin: auto auto;
 }
