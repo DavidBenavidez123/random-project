@@ -81,7 +81,7 @@ function Chat(props) {
         axios.post('http://localhost:5000/api/message/scroll', offSet)
             .then(res => {
                 setLoading(false)
-                scroll.scrollTop = 10
+                scroll.scrollTop = 1
                 setMessages(messages => [...res.data.messages, ...messages])
             })
             .catch(err => {
@@ -122,12 +122,8 @@ function Chat(props) {
     }
 
 
-    const editMessageTrue = () => {
-        setEditInput(true)
-    }
-
-    const editMessageFalse = () => {
-        setEditInput(false)
+    const editMessagetoggle = () => {
+        setEditInput(!editInput)
     }
 
     return (
@@ -140,8 +136,7 @@ function Chat(props) {
                         }
                         {messages.map((message, index) => {
                             return <ChatMessages
-                                editMessageTrue={editMessageTrue}
-                                editMessageFalse={editMessageFalse}
+                                editMessagetoggle={editMessagetoggle}
                                 index={index}
                                 deleteMessages={deleteMessages}
                                 updateMessages={updateMessages}

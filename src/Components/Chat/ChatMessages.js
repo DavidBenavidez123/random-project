@@ -20,7 +20,8 @@ export default class MessageList extends Component {
 
     changeEdit = e => {
         this.setState(prevState => ({
-            edit: !prevState.edit
+            edit: !prevState.edit,
+            message: this.props.message.message
         }));
     }
 
@@ -57,8 +58,12 @@ export default class MessageList extends Component {
                                     if (event.key === "Enter" && this.state.message.replace(/\s/g, "") !== "" && !event.shiftKey) {
                                         this.props.updateMessages(this.props.message.messages_id, this.state.message, this.props.index)
                                         this.setState({
-                                            edit: false
-                                        })
+                                            edit: false,
+                                            emoji: false
+                                        }, () => {
+                                            this.props.editMessagetoggle();
+                                        });
+
                                         event.preventDefault();
                                     }
                                 }}
@@ -71,12 +76,13 @@ export default class MessageList extends Component {
                             )
                         }
                     </Linkify>
+
                     {this.props.sentByUser &&
                         <div className='edit-delete'>
                             {this.state.edit && this.props.editInput ? (
                                 <div className="icon-cancel">
                                     <Icon onClick={this.emojiToggle} size='small' name='smile outline' />
-                                    <h4 onClick={() => { this.changeEdit(); this.props.editMessageFalse() }}>
+                                    <h4 onClick={() => { this.changeEdit(); this.props.editMessagetoggle() }}>
                                         Cancel
                                     </h4>
                                 </div>
@@ -92,7 +98,7 @@ export default class MessageList extends Component {
                                                 </div>
                                             ) :
                                             (
-                                                <h4 onClick={() => { this.changeEdit(); this.props.editMessageTrue() }}>
+                                                <h4 onClick={() => { this.changeEdit(); this.props.editMessagetoggle() }}>
                                                     Edit
                                                 </h4>
                                             )
