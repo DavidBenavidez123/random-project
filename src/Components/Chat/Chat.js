@@ -89,8 +89,8 @@ function Chat(props) {
             })
     }
 
-    const updateMessages = (id, text) => {
-        const message = { id, text }
+    const updateMessages = (id, text, created_at) => {
+        const message = { id, text, created_at }
         socketRef.current.emit("updating message", message)
     }
 
