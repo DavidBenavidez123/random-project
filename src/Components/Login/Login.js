@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Login.css';
-import socketIOClient from "socket.io-client";
+import { useHistory } from 'react-router-dom';
 import { Link, } from 'react-router-dom'
 import { Input, Form, Label, Loader } from 'semantic-ui-react'
 import axios from 'axios'
@@ -16,12 +16,13 @@ function Login(props) {
     const [loginError, setLoginError] = useState(false)
     const [loginButton, setloginButton] = useState('Login')
 
+    const history = useHistory();
     const login = () => {
         const err = fieldCheck()
         if (err) {
             setloginButton('')
             const data = { username, password }
-            axios.post('https://chat-backend-1.herokuapp.com/api/user/login', data)
+            axios.post('http://localhost:5000/api/user/login', data)
                 .then(response => {
                     if (response.data.message) {
                         setLoginError(true)
@@ -91,7 +92,7 @@ function Login(props) {
                         <Label basic color='red' pointing>Username/Password is incorrect</Label>
                     }
                 </Form>
-                
+
                 {loginButton.length ? (
                     <button onClick={login} className="register-button" type="submit">
                         {loginButton}

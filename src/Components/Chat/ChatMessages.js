@@ -12,20 +12,6 @@ export default class MessageList extends Component {
         emoji: false,
     }
 
-    formatDate(date) {
-        var d = new Date(date),
-            month = '' + (d.getMonth() + 1),
-            day = '' + d.getDate(),
-            year = d.getFullYear();
-
-        if (month.length < 2)
-            month = '0' + month;
-        if (day.length < 2)
-            day = '0' + day;
-
-        return [year, month, day].join('-');
-    }
-
     onChange = (e) => {
         this.setState({
             message: e.target.value
@@ -58,8 +44,6 @@ export default class MessageList extends Component {
     }
 
     render() {
-        const endDate = new Date().toISOString().slice(0, 10)
-        console.log(endDate);
         return (
             <div>
                 <div className={(this.props.sentByUser) ? 'User-Own-Message' : 'User-Recipient-Message'}>

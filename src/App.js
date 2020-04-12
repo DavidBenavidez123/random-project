@@ -46,7 +46,7 @@ function App() {
       setAuthenticated(true)
     }
   }
-
+  
   return (
     <div className="App">
       {
@@ -56,10 +56,9 @@ function App() {
             <Switch>
               <Route
                 exact
-                path="/"
+                path="/:room"
                 render={props => <Chat {...props} getUserData={getUserData} user={user} />}
               />
-              <Route render={() => (<Redirect to="/" />)} />
             </Switch>
           </div>
         ) : (
@@ -69,7 +68,6 @@ function App() {
                 path="/Login"
                 render={props => <Login {...props} getUserData={getUserData} />}
               />
-              <Route render={() => (<Redirect to="/login" />)} />
             </Switch>
 
           )
