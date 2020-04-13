@@ -22,7 +22,7 @@ function Login(props) {
         if (err) {
             setloginButton('')
             const data = { username, password }
-            axios.post('http://localhost:5000/api/user/login', data)
+            axios.post('https://chat-backend-1.herokuapp.com/api/user/login', data)
                 .then(response => {
                     if (response.data.message) {
                         setLoginError(true)

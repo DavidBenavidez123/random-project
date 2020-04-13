@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, } from 'react';
-import { useHistory, useParams, useLocation } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import './Chat.css';
 import socketIOClient from "socket.io-client";
 import { Input, Loader, Icon } from 'semantic-ui-react'
@@ -8,6 +8,7 @@ import ScrollToBottom from 'react-scroll-to-bottom';
 import ChatMessages from './ChatMessages'
 import Picker from 'emoji-picker-react';
 import Rooms from './Rooms'
+import Users from './Users'
 
 function Chat(props) {
     let data = 0
@@ -21,24 +22,30 @@ function Chat(props) {
     const [roomUsers, setRoomUsers] = useState([]);
     const [rooms, setRooms] = useState([]);
     const [name, setName] = useState('');
+    const [currentUsers, setCurrentUsers] = useState([]);
 
     let history = useHistory();
     useEffect(() => {
-        socketRef.current = socketIOClient('http://localhost:5000')
+        socketRef.current = socketIOClient('https://chat-backend-1.herokuapp.com/')
+        initialUsersLoad()
+        firstLoad()
+        joinRoom()
+        joinRoomOn()
         loadMessages()
         loadupdateMessages()
         loadDeleteMessages()
-        recieveRoomUsers()
-        joinRoom()
-        joinRoomOn()
         loadRooms()
         loadEmittedRoom()
+        currentUsersSocket()
+        currentUsersSocketOn()
+        leavingUsersSocket()
         return () => {
+            leavingUsersSocketOn()
+            leavingUsersSocket()
+            leavingRoom()
+            leavingRoomOn()
             socketRef.current.disconnect();
         }
-    }, [])
-    useEffect(() => {
-        firstLoad()
     }, [location.room])
 
     useEffect(() => {
@@ -60,23 +67,56 @@ function Chat(props) {
         setMessage(message => message + emojiObject.emoji);
     }
 
+    const initialUsersLoad = () => {
+        axios.get(`https://chat-backend-1.herokuapp.com/api/rooms/room/${location.room}`)
+            .then(res => {
+                console.log('initialUsersLoad', res.data)
+                setCurrentUsers(res.data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+
+    const currentUsersSocket = () => {
+        const userId = props.user.user_id
+        const userName = props.user.userName
+        const room = location.room
+        const data = { room, userId, userName }
+        socketRef.current.emit("users room", data)
+    }
+
+    const currentUsersSocketOn = () => {
+        socketRef.current.on("users room", (user) => {
+            setCurrentUsers(user)
+        })
+    }
+
+    console.log(location.room)
+
     const joinRoom = () => {
-        let room = location.room
         let name = props.user.userName
+        let room = location.room
         socketRef.current.emit("joining room", { name, room })
     }
 
     const joinRoomOn = () => {
-        socketRef.current.on("joining room", (name) => {
-            console.log(name)
+        socketRef.current.on("joining room", (users) => {
+            setRoomUsers(users)
         })
     }
 
-    const recieveRoomUsers = () => {
-        socketRef.current.on("users room", (users) => {
-            setRoomUsers(roomUser => [...roomUser, users])
+    const leavingRoomOn = () => {
+        socketRef.current.on("leaving room", (users) => {
+            setRoomUsers(users)
         })
     }
+
+    const leavingRoom = () => {
+        let room = location.room
+        socketRef.current.emit("leaving room", { room })
+    }
+
 
     const sendMessages = () => {
         const users_id = props.user.user_id
@@ -94,9 +134,8 @@ function Chat(props) {
     }
 
     const firstLoad = () => {
-        axios.get(`http://localhost:5000/api/message/${location.room}/messages`)
+        axios.get(`https://chat-backend-1.herokuapp.com/api/message/${location.room}/messages`)
             .then(res => {
-                console.log('loading message', res.data)
                 if (res.data.room) {
                     history.push('/Global')
                 }
@@ -114,7 +153,7 @@ function Chat(props) {
         let scroll = document.querySelector('.css-y1c0xs')
         const room = location.room
         const offSet = { data, room }
-        axios.post('http://localhost:5000/api/message/scroll', offSet)
+        axios.post('https://chat-backend-1.herokuapp.com/api/message/scroll', offSet)
             .then(res => {
                 setLoading(false)
                 scroll.scrollTop = 1
@@ -129,15 +168,32 @@ function Chat(props) {
         socketRef.current.emit("adding room", name)
         setName('')
     }
+
+
+
+    const leavingUsersSocketOn = () => {
+        const userId = props.user.user_id
+        const userName = props.user.userName
+        const room = location.room
+        const data = { room, userId, userName }
+        socketRef.current.emit("users leaving room", data)
+    }
+
+    const leavingUsersSocket = () => {
+        socketRef.current.on("users leaving room", (user) => {
+            console.log(user)
+            setCurrentUsers(user)
+        })
+    }
+
     const loadEmittedRoom = () => {
         socketRef.current.on("adding room", (name) => {
             setRooms(room => [...room, name])
         })
-
     }
 
     const loadRooms = () => {
-        axios.get(`http://localhost:5000/api/rooms/rooms`)
+        axios.get(`https://chat-backend-1.herokuapp.com/api/rooms/rooms`)
             .then(res => {
                 setRooms(res.data)
             })
@@ -205,12 +261,19 @@ function Chat(props) {
                         return <Rooms
                             key={room.room_id}
                             room={room}
+                            users={roomUsers}
                         />;
                     })}
                 </div>
                 <div className='users'>
-
-
+                    <h2>
+                        Users in room
+                    </h2>
+                    {currentUsers.map((user) => {
+                        return <Users
+                            user={user}
+                        />;
+                    })}
 
                 </div>
             </div>

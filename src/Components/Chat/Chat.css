@@ -237,12 +237,20 @@ aside.emoji-picker-react {
 
 .room p {
     color: white;
+    padding: 0px;
 }
 
 .room:hover {
     opacity: .8;
 }
 
+.users h2 {
+    color: white;
+}
+
+.users p {
+    color: white;
+}
 
 .room-name {
     border-bottom: 1px solid black;
@@ -253,6 +261,7 @@ aside.emoji-picker-react {
 
 .room-name p {
     color: white;
+
 }
 
 .rooms {

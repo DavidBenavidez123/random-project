@@ -26,7 +26,7 @@ function Register(props) {
         const err = fieldCheck()
         if (err) {
             setregisterButton('Registering...')
-            axios.post('http://localhost:5000/api/user/register', data)
+            axios.post('https://chat-backend-1.herokuapp.com/api/user/register', data)
                 .then(response => {
                     console.log('response', response.data)
                     const error = response.data
