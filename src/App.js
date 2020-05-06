@@ -27,7 +27,7 @@ function App() {
       }
     };
     axios
-      .get('https://chat-backend-1.herokuapp.com/api/user/userData', options)
+      .get('http://localhost:5000/api/user/userData', options)
       .then(res => {
         setUser(res.data.data)
         checkAuthentication(res.data)

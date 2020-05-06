@@ -8,7 +8,6 @@ function Register(props) {
     const [username, setUsername] = useState('')
     const [email, setemail] = useState('')
     const [password, setPassword] = useState('')
-    const [err, setErr] = useState('')
     const [emailErr, setEmailErr] = useState('')
     const [nameErr, setNameErr] = useState('')
     const [emptyNameText, setEmptyNameText] = useState('')
@@ -40,10 +39,8 @@ function Register(props) {
                 })
                 .catch(() => {
                     console.log('loading')
-                    setErr('Error')
                 })
         }
-
     }
 
     const fieldCheck = () => {

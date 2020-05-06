@@ -9,10 +9,12 @@ import ChatMessages from './ChatMessages'
 import Picker from 'emoji-picker-react';
 import Rooms from './Rooms'
 import Users from './Users'
+import { Drawer } from 'antd';
 
 function Chat(props) {
     let data = 0
     let location = useParams();
+    const [visible, setVisible] = useState(false)
     const [messages, setMessages] = useState([])
     const [message, setMessage] = useState('')
     const [loading, setLoading] = useState(false)
@@ -26,7 +28,7 @@ function Chat(props) {
 
     let history = useHistory();
     useEffect(() => {
-        socketRef.current = socketIOClient('https://chat-backend-1.herokuapp.com/')
+        socketRef.current = socketIOClient('http://localhost:5000')
         initialUsersLoad()
         firstLoad()
         joinRoom()
@@ -52,7 +54,7 @@ function Chat(props) {
         let scroll = document.querySelector('.css-y1c0xs')
         scroll.addEventListener('scroll', () => {
             let x = scroll.scrollTop
-            if (x == 0) {
+            if (x === 0) {
                 setTimeout(() => {
                     loadScroll(data += 10)
                 }, 500);
@@ -61,16 +63,20 @@ function Chat(props) {
         return () => {
             scroll.removeEventListener('scroll', loadScroll);
         }
+
     }, [])
+
+    const drawer = () => {
+        setVisible(!visible)
+    }
 
     const onEmojiClick = (event, emojiObject) => {
         setMessage(message => message + emojiObject.emoji);
     }
 
     const initialUsersLoad = () => {
-        axios.get(`https://chat-backend-1.herokuapp.com/api/rooms/room/${location.room}`)
+        axios.get(`http://localhost:5000/api/rooms/room/${location.room}`)
             .then(res => {
-                console.log('initialUsersLoad', res.data)
                 setCurrentUsers(res.data)
             })
             .catch(err => {
@@ -91,8 +97,6 @@ function Chat(props) {
             setCurrentUsers(user)
         })
     }
-
-    console.log(location.room)
 
     const joinRoom = () => {
         let name = props.user.userName
@@ -241,7 +245,7 @@ function Chat(props) {
 
     return (
         <div className='chat-container'>
-            <div className='Sidebar'>
+            <div className='Sidebar-desktop'>
                 <div className='add-room'>
                     <h2>
                         Add a room!
@@ -277,10 +281,59 @@ function Chat(props) {
 
                 </div>
             </div>
+
+            <Drawer
+                placement='left'
+                closable={false}
+                visible={visible}
+                onClose={drawer}
+            >
+                <div className="Sidebar-mobile">
+                    <div className='add-room'>
+                        <h2>
+                            Add a room!
+                    </h2>
+                        <Input
+                            onChange={(event) => { setName(event.target.value) }}
+                            onKeyDown={(event) => {
+                                if (event.key === "Enter" && (name.replace(/\s/g, "") !== "") && !event.shiftKey) {
+                                    addRoom()
+                                    event.preventDefault();
+                                }
+                            }}
+                        />
+                    </div>
+                    <div className='rooms'>
+                        {rooms.map((room) => {
+                            return <Rooms
+                                key={room.room_id}
+                                room={room}
+                                users={roomUsers}
+                            />;
+                        })}
+                    </div>
+                    <div className='users'>
+                        <h2>
+                            Users in room
+                    </h2>
+                        {currentUsers.map((user) => {
+                            return <Users
+                                user={user}
+                            />;
+                        })}
+                    </div>
+                </div>
+            </Drawer>
+
             <div className="Chat">
                 <div className="messages-scroll">
                     <div className='room-name'>
-                        <p>
+                        <div onClick={drawer} className='hamburger'>
+                            <div className='line'></div>
+                            <div className='line'></div>
+                            <div className='line'></div>
+                        </div>
+                        <p >
                             {location.room}
                         </p>
                     </div>
@@ -325,7 +378,7 @@ function Chat(props) {
                     }
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 
