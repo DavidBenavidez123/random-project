@@ -27,8 +27,10 @@ function Chat(props) {
     const [currentUsers, setCurrentUsers] = useState([]);
 
     let history = useHistory();
+
+
     useEffect(() => {
-        socketRef.current = socketIOClient('http://localhost:5000')
+        socketRef.current = socketIOClient('https://chat-backend-1.herokuapp.com')
         initialUsersLoad()
         firstLoad()
         joinRoom()
@@ -46,11 +48,26 @@ function Chat(props) {
             leavingUsersSocket()
             leavingRoom()
             leavingRoomOn()
-            socketRef.current.disconnect();
+
         }
     }, [location.room])
 
     useEffect(() => {
+        scrollListener()
+    }, [])
+
+
+    const logout = () => {
+        localStorage.clear('jwt')
+        leavingUsersSocketOn()
+        leavingUsersSocket()
+        leavingRoom()
+        leavingRoomOn()
+        socketRef.current.disconnect();
+        window.location.reload();
+    }
+
+    const scrollListener = () => {
         let scroll = document.querySelector('.css-y1c0xs')
         scroll.addEventListener('scroll', () => {
             let x = scroll.scrollTop
@@ -63,8 +80,7 @@ function Chat(props) {
         return () => {
             scroll.removeEventListener('scroll', loadScroll);
         }
-
-    }, [])
+    }
 
     const drawer = () => {
         setVisible(!visible)
@@ -75,7 +91,7 @@ function Chat(props) {
     }
 
     const initialUsersLoad = () => {
-        axios.get(`http://localhost:5000/api/rooms/room/${location.room}`)
+        axios.get(`https://chat-backend-1.herokuapp.com/api/rooms/room/${location.room}`)
             .then(res => {
                 setCurrentUsers(res.data)
             })
@@ -138,12 +154,14 @@ function Chat(props) {
     }
 
     const firstLoad = () => {
+        setMessages([])
         axios.get(`https://chat-backend-1.herokuapp.com/api/message/${location.room}/messages`)
             .then(res => {
                 if (res.data.room) {
                     history.push('/Global')
                 }
                 else {
+                    console.log('channel messages', res.data.messages)
                     setMessages(res.data.messages)
                 }
             })
@@ -172,6 +190,8 @@ function Chat(props) {
         socketRef.current.emit("adding room", name)
         setName('')
     }
+
+    console.log('room name',name)
 
 
 
@@ -251,10 +271,12 @@ function Chat(props) {
                         Add a room!
                     </h2>
                     <Input
+                        value={name}
                         onChange={(event) => { setName(event.target.value) }}
                         onKeyDown={(event) => {
                             if (event.key === "Enter" && (name.replace(/\s/g, "") !== "") && !event.shiftKey) {
                                 addRoom()
+                                setName('')
                                 event.preventDefault();
                             }
                         }}
@@ -279,6 +301,11 @@ function Chat(props) {
                         />;
                     })}
 
+                </div>
+                <div onClick={logout} className='mobile-logout'>
+                    <p >
+                        Logout
+                        </p>
                 </div>
             </div>
 
@@ -321,6 +348,11 @@ function Chat(props) {
                                 user={user}
                             />;
                         })}
+                    </div>
+                    <div onClick={logout} className='mobile-logout'>
+                        <p >
+                            Logout
+                        </p>
                     </div>
                 </div>
             </Drawer>
